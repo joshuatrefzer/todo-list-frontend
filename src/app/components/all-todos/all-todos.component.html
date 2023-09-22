@@ -1,1 +1,6 @@
-<p>all-todos works!</p>
+<h1 *ngIf="error" >{{error}}</h1>
+<div *ngFor="let todo of todos">
+    <input type="checkbox" [checked]="todo.checked" name="" id="">
+    {{ todo.titel }}
+
+</div>
