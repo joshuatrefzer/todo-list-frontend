@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { catchError, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-all-todos',
@@ -9,15 +10,20 @@ import { environment } from 'src/environments/environment.prod';
   styleUrls: ['./all-todos.component.scss']
 })
 export class AllTodosComponent implements OnInit {
+  newTodo: string = '';
+
   todos: any = [];
   error = "";
-  constructor(private http: HttpClient) { }
+  popupOpen = false;
+  changeValue:string = '';
+
+  constructor(private http: HttpClient,private renderer: Renderer2, private el: ElementRef) { }
 
   async ngOnInit() {
     try {
       this.todos = await this.loadTodos();
       console.log(this.todos);
-    } catch(e) {
+    } catch (e) {
       this.error = 'Fehler beim laden';
     }
   }
@@ -26,6 +32,63 @@ export class AllTodosComponent implements OnInit {
     const url = environment.baseUrl + '/todos/';
     return lastValueFrom(this.http.get(url));
   }
+
+
+  change(todo:any) {
+    this.showPopup(todo.id);
+    this.changeValue = todo.titel;
+  }
+
+  showPopup(id:number){
+    const element = this.el.nativeElement.querySelector(`#todo${id}`);
+    this.renderer.removeClass(element, 'd-none');
+  }
+
+  cancel(id:number){
+    const element = this.el.nativeElement.querySelector(`#todo${id}`);
+    this.renderer.addClass(element, 'd-none');
+  }
+
+  updateTodo(id: number){
+    const url = `${environment.baseUrl}/todos/${id}`;
+    const data = {
+      "titel": this.changeValue,
+    }
+    return lastValueFrom(this.http.put(url, data));
+  }
+
+ 
+
+  //funktioniert
+  addTodo() {
+    const url = environment.baseUrl + '/todos/';
+    const data = {
+      "titel": this.newTodo,
+    }
+    try {
+      return lastValueFrom(this.http.post(url, data));
+    } catch(e){
+      console.log('Folgender Fehler', e);
+      return false;
+    }
+  }
+
+//funktioniert
+deleteTodo(id: number) {
+  const url = `${environment.baseUrl}/todos/${id}`; // DELETE api/heroes/42
+  return lastValueFrom(this.http.delete(url));
+}
+
+
+
+
+
+
+
+
+
+
+
 
   // JS Way
   // loadTodos() {

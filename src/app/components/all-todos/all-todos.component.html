@@ -1,6 +1,19 @@
-<h1 *ngIf="error" >{{error}}</h1>
-<div *ngFor="let todo of todos">
+<h1 *ngIf="error">{{error}}</h1>
+<div style="margin: 50px;" *ngFor="let todo of todos">
     <input type="checkbox" [checked]="todo.checked" name="" id="">
     {{ todo.titel }}
-
+    <div (click)="deleteTodo(todo.id)">
+        <mat-icon>close</mat-icon>
+    </div>
+    <br>
+    <button (click)="change(todo)" >bearbeiten</button>
+    <div  id="todo{{todo.id}}" class="popup d-none">
+        <input type="text" [(ngModel)]="changeValue">
+        <button (click)="updateTodo(todo.id)">change</button>
+        <button (click)="cancel(todo.id)">abbrechen</button>
+    </div>
 </div>
+
+
+<input type="text" [(ngModel)]="newTodo">
+<button (click)="addTodo()">Add Todo</button>
