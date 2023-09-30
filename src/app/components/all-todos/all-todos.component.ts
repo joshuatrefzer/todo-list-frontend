@@ -4,6 +4,9 @@ import { catchError, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
 import {MatIconModule} from '@angular/material/icon';
 
+
+
+
 @Component({
   selector: 'app-all-todos',
   templateUrl: './all-todos.component.html',
@@ -50,11 +53,11 @@ export class AllTodosComponent implements OnInit {
   }
 
   updateTodo(id: number){
-    const url = `${environment.baseUrl}/todos/${id}`;
+    const url = `${environment.baseUrl}/todos/${id}/`;
     const data = {
       "titel": this.changeValue,
     }
-    return lastValueFrom(this.http.put(url, data));
+    return lastValueFrom(this.http.patch(url, data));
   }
 
  
